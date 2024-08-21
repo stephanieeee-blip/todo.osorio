@@ -54,7 +54,7 @@ const addNewToDo = () => {
         toDoInput.value = '';
         errorInfo.textContent = '';
     } else {
-        errorInfo.textContent = 'Wpisz treść zadania!';
+        errorInfo.textContent = '';
     }
 }
 
@@ -116,7 +116,7 @@ const changeTodoText = () => {
         popup.style.display = 'none';
         popupInfo.textContent = '';
     } else {
-        popupInfo.textContent = 'Musisz podać jakąś treść!';
+        popupInfo.textContent = '';
     }
 }
 
@@ -126,7 +126,7 @@ const deleteToDo = (e) => {
  
     const allToDos = ulList.querySelectorAll('li');
     if (allToDos.length == 0) {
-        errorInfo.textContent = 'Brak zadań na liście.'
+        errorInfo.textContent = ''
     }
 }
 
