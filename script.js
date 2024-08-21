@@ -1,25 +1,25 @@
-let toDoInput; 
-let errorInfo; 
+let Input;
+let errorInfo;
 let addBtn; 
-let ulList; 
-let newToDo; 
+let ulList;
+let newToDo;
 
-let popup; 
-let popupInfo; 
+let popup;
+let popupInfo;
 let todoToEdit; 
 let popupInput; 
-let popupAddBtn; 
+let popupAddBtn;
 let popupCloseBtn; 
 
 const main = () => {
-    
+
     prepareDOMElements();
     prepareDOMEvents();
 }
 
 const prepareDOMElements = () => {
-   
-    toDoInput = document.querySelector('.todo-input');
+ 
+    Input = document.querySelector('.todo-input');
     errorInfo = document.querySelector('.error-info');
     addBtn = document.querySelector('.btn-add');
     ulList = document.querySelector('.todolist ul');
@@ -32,29 +32,49 @@ const prepareDOMElements = () => {
 }
 
 const prepareDOMEvents = () => {
-  
+
     addBtn.addEventListener('click',addNewToDo);
     ulList.addEventListener('click', checkClick);
     popupCloseBtn.addEventListener('click', closePopup);
     popupAddBtn.addEventListener('click', changeTodoText);
-    toDoInput.addEventListener('keyup', enterKeyCheck);
+    Input.addEventListener('keyup', enterKeyCheck);
 }
 
 const addNewToDo = () => {
-    
-    if (toDoInput.value != ''){
-        newToDo = document.createElement('li');
-        newToDo.textContent = toDoInput.value;
-        
-        createToolAreal();
-        
-        ulList.append(newToDo);
-        
-        
-        toDoInput.value = '';
-        errorInfo.textContent = '';
+    if (Input.value !== '') {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `Do you want to add "${Input.value}" to your to-do list?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, add it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                newToDo = document.createElement('li');
+                newToDo.textContent = Input.value;
+                
+                createToolAreal();
+                
+                ulList.append(newToDo);
+                
+                Input.value = '';
+                errorInfo.textContent = '';
+                
+                Swal.fire(
+                    'Added!',
+                    'Your task has been added.',
+                    'success'
+                );
+            }
+        });
     } else {
-        errorInfo.textContent = '';
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Input task is required!',
+        });
     }
 }
 
@@ -62,7 +82,7 @@ const createToolAreal = () => {
     
     const div = document.createElement('div');
     div.classList.add('tools');
-  
+   
     newToDo.append(div);
 
     const buttonDone = document.createElement('button');
@@ -77,14 +97,12 @@ const createToolAreal = () => {
     buttonCancel.classList.add('delete');
     buttonCancel.innerHTML = '<i class="fas fa-times"></i>'
 
-    
     div.append(buttonDone, buttonEdit, buttonCancel);
 }
 
-
 const checkClick = (e) => {
     if(e.target.matches('.complete')){
-        e.target.closest('li').classList.toggle('completed'); 
+        e.target.closest('li').classList.toggle('completed');
         e.target.classList.toggle('completed');
 
     } else if (e.target.matches('.edit')) {
@@ -98,8 +116,8 @@ const checkClick = (e) => {
 
 
 const editToDo = (e) => { 
-    todoToEdit = e.target.closest('li'); 
-    popupInput.value = todoToEdit.firstChild.textContent;
+    todoToEdit = e.target.closest('li');
+    popupInput.value = todoToEdit.firstChild.textContent; 
     popup.style.display = 'flex';
 }
 
@@ -108,35 +126,46 @@ const closePopup = () => {
     popupInfo.textContent = '';
 }
 
-
 const changeTodoText = () => {
-    if (popupInput.value != '') {
+    if (popupInput.value !== '') {
         todoToEdit.firstChild.textContent = popupInput.value;
-
         popup.style.display = 'none';
         popupInfo.textContent = '';
     } else {
-        popupInfo.textContent = '';
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Input task is required!',
+        });
     }
 }
 
 const deleteToDo = (e) => {
-    e.target.closest('li').remove();
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This task will be deleted!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            e.target.closest('li').remove();
 
- 
-    const allToDos = ulList.querySelectorAll('li');
-    if (allToDos.length == 0) {
-        errorInfo.textContent = ''
-    }
-}
+            const allToDos = ulList.querySelectorAll('li');
+            if (allToDos.length === 0) {
+                errorInfo.textContent = 'No tasks on the list.';
+            }
 
-
-const enterKeyCheck = (e) => {
-    if(e.key == 'Enter'){
-        addNewToDo();
-    }
+            Swal.fire(
+                'Deleted!',
+                'Your task has been deleted.',
+                'success'
+            );
+        }
+    });
 }
 
 
 document.addEventListener('DOMContentLoaded', main);
-
